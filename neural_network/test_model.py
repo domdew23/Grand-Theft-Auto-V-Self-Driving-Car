@@ -11,30 +11,36 @@ import os
 import cv2
 import numpy as np
 
-WIDTH = 80
-HEIGHT = 60
+WIDTH = 160
+HEIGHT = 120
 LEARNING_RATE  = .001
-EPOCHS = 8
+EPOCHS = 10
 MODEL_NAME = 'pygta5-car-{}-{}-{}-epochs.model'.format(LEARNING_RATE, 'alexnetv2', EPOCHS)
+TIME = 0.09
+
+model = alexnet(WIDTH, HEIGHT, LEARNING_RATE)
+model.load(MODEL_NAME)
+
 
 def straight():
 	PressKey(W)
 	ReleaseKey(A)
 	ReleaseKey(D)
 
+
 def left():
 	PressKey(A)
 	PressKey(W)
 	ReleaseKey(D)
+	time.sleep(TIME)
+	ReleaseKey(A)
+
 
 def right():
 	PressKey(D)
 	PressKey(W)
-	ReleaseKey(D)
-
-def slow_down():
-	ReleaseKey(W)
 	ReleaseKey(A)
+	time.sleep(TIME)
 	ReleaseKey(D)
 
 
@@ -42,14 +48,6 @@ def countdown(seconds):
 	for i in list(range(seconds)) [::-1]:
 		print(i + 1)
 		time.sleep(1)
-
-
-model = alexnet(WIDTH, HEIGHT, LEARNING_RATE)
-model.load(MODEL_NAME)
-
-STRAIGHT = [0, 1, 0]
-LEFT = [1, 0, 0]
-RIGHT = [0, 0, 1]
 
 
 def main():
@@ -61,17 +59,24 @@ def main():
 		if not PAUSED:
 			screen = grab_screen(region=(0, 40, 800, 640))
 			screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
-			screen = cv2.resize(screen, (80,60))
+			screen = cv2.resize(screen, (WIDTH,HEIGHT))
+
 			# prediction
 			prediction = model.predict([screen.reshape(WIDTH, HEIGHT, 1)])[0]
-			moves = list(np.around(prediction))
-			print(moves, prediction)
+			print(prediction)
 
-			if moves == LEFT:
-				left()
-			elif moves == STRAIGHT:
+			turn_treshold = .75
+			fwd_threshold = .70
+
+			LEFT = prediction[0]
+			STRAIGHT = prediction[1]
+			RIGHT = prediction[2]
+
+			if  STRAIGHT > fwd_threshold:
 				straight()
-			elif moves == RIGHT:
+			elif LEFT > turn_treshold:
+				left()
+			elif RIGHT > turn_treshold:
 				right()
 
 		keys = key_check()

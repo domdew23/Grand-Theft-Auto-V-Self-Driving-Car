@@ -1,16 +1,15 @@
 import numpy as np 
 from alexnet import alexnet
-from sklearn.model_selection import train_test_split
 
-WIDTH = 80
-HEIGHT = 60
+WIDTH = 160
+HEIGHT = 120
 LEARNING_RATE  = .001
-EPOCHS = 8
+EPOCHS = 10
 MODEL_NAME = 'pygta5-car-{}-{}-{}-epochs.model'.format(LEARNING_RATE, 'alexnetv2', EPOCHS)
 
 model = alexnet(WIDTH, HEIGHT, LEARNING_RATE)
 
-train_data = np.load('../data/training_data_v2.npy')
+train_data = np.load('../data/final_training_data.npy')
 
 train = train_data[:-500]
 test = train_data[-500:]

@@ -1,10 +1,8 @@
 # Citation:
 #    - Alex Krizhevsky, Ilya Sutskever & Geoffrey E. Hinton. ImageNet
 #    Classification with Deep Convolutional Neural Networks. NIPS, 2012.
-#    - 17 Category Flower Dataset. Maria-Elena Nilsback and Andrew Zisserman.
 # Links:
 #    - [AlexNet Paper](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
-#    - [Flower Dataset (17)](http://www.robots.ox.ac.uk/~vgg/data/flowers/17/)
 
 
 import tflearn
@@ -36,11 +34,7 @@ def alexnet(width, height, learning_rate):
                        loss='categorical_crossentropy',
                        learning_rate=learning_rate)
 
-  # Training
   model = tflearn.DNN(network, checkpoint_path='model_alexnet',
-                      max_checkpoints=1, tensorboard_verbose='log')
+                      max_checkpoints=1, tensorboard_verbose=0, tensorboard_dir='../log')
 
   return model
-  #model.fit(X, Y, n_epoch=1000, validation_set=0.1, shuffle=True,
-   #         show_metric=True, batch_size=64, snapshot_step=200,
-    #        snapshot_epoch=False, run_id='alexnet_oxflowers17')

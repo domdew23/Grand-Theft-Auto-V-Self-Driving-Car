@@ -46,8 +46,9 @@ print(len(rights))
 
 final_data = forwards + lefts + rights
 shuffle(final_data)
+
 print("final data: {}".format(len(final_data)))
 print("train data: {}".format(len(train_data)))
 
-np.save('data/training_data_v2.npy', final_data)
+#np.save('../data/final_training_data.npy', final_data)
 
