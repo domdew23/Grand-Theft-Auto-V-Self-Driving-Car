@@ -1,54 +1,56 @@
-import time
-import os
-import cv2
-import numpy as np
 import sys
+sys.path.append('..\dependencies')
+import cv2
+import time
+import constants as const
 
-sys.path.append('../functions')
-from get_keys import key_check
-from grab_screen import grab_screen
+from functions import key_check, grab_screen, countdown, prompt_quit
 
 # neural network:
 # input is pixel data
 # output is the movements
 # input data is to manually drive and train data based off that
 
-FILE_NAME = '../data/training_data.npy'
-
 def keys_to_output(keys):
-	# [A, W, D] (left, straight, right)
-	output = [0, 0, 0]
-	if 'A' in keys:
-		output[0] = 1
-	elif 'D' in keys:
-		output[2] = 1
-	else:
-		output[1] = 1
+    # [A, W, D] (left, straight, right)
+    output = [0, 0, 0]
+    if 'A' in keys:
+        output[0] = 1
+    elif 'D' in keys:
+        output[2] = 1
+    else:
+        output[1] = 1
 
-	return output
-
-
-def countdown(seconds):
-	for i in list(range(seconds)) [::-1]:
-		print(i + 1)
-		time.sleep(1)
+    return output
 
 
 def get_file():
-	if os.path.isfile(FILE_NAME):
-		print("File exists, loading previous data")
-		training_data = list(np.load(FILE_NAME))
-	else:
-		print("File does not exist, creating file...")
-		training_data = []
+    if os.path.isfile(const.FILE_NAME):
+        print("File exists, loading previous data")
+        training_data = list(np.load(const.FILE_NAME))
+    else:
+        print("File does not exist, creating file...")
+        training_data = []
 
-	return training_data
+    return training_data
+
+
+def save(length, training_data):
+    save_time = time.time()
+    print("Saving... || training_data length: {}".format(length))
+    np.save(const.FILE_NAME, training_data)
+    print("Took || {}{:.2f}{} minutes to save".format('{', (time.time()- save_time) / 60, '}'))
+    prompt_quit()
+    print("Saved")
+    time.sleep(1)
+
+
 
 def main():
 	start_time = time.time() 
 
-	training_data = get_file()
-
+	#training_data = get_file()
+	training_data = []
 	print("Took || {}{}{} seconds to load data".format('{', time.time()- start_time, '}'))
 
 	countdown(4)
@@ -67,24 +69,16 @@ def main():
 			keys = key_check()
 			output = keys_to_output(keys)
 			training_data.append([screen, output])
-
 			length = len(training_data)
 
 			if length % 100000 == 0:
-				save_time = time.time()
-				print("Saving... || training_data length: {}".format(length))
-				np.save(FILE_NAME, training_data)
-				print("Took || {}{:.2f}{} minutes to save".format('{', (time.time()- save_time) / 60, '}'))
-				cont = input("Would you like to cointue training or exit? \nPress y to continue or n to exit.")
-					if cont == 'n':
-						sys.exit()
-
-
+				pass
+				#save(length, training_data)
 			print("Not Paused Loop took: {}{:.3f}{} seconds || training_data length: {}".format('{', time.time()- start_time, '}', length))
 		
 		keys = key_check()
 
-		if 'T' in keys:
+		if 'P' in keys:
 			if PAUSED:
 				print('Unpausing...')
 				PAUSED = False
@@ -95,7 +89,7 @@ def main():
 				time.sleep(1)
 				print('Paused')
 				print("training_data length: {}".format(len(training_data)))
-
-
+				prompt_quit()
+				print('Press (p) to unpause')
 
 main()

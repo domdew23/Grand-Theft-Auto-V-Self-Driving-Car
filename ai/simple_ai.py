@@ -1,13 +1,13 @@
 import sys
-sys.path.append('../functions')
-from direct_keys import PressKey, ReleaseKey, W, A, S, D
-from grab_screen import grab_screen
-from draw_lanes import draw_lanes
-
+sys.path.append('../dependencies')
 import cv2
 import time
 import pyautogui
 import numpy as np
+
+from functions import direct_keys, grab_screen, draw_lanes
+from constants import W, A, S, D
+
 
 def roi(image, vertices):
 	# Get the region of interest (where lanes will be on screen)
