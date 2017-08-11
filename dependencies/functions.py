@@ -11,7 +11,7 @@ from numpy.linalg import lstsq
 from statistics import mean
 
 PUL = ctypes.POINTER(ctypes.c_ulong)
-SENDINPUT = ctypes.windll.user32.SendInput
+SendInput = ctypes.windll.user32.SendInput
 KEY_LIST = ["\b"]
 for char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890,.'APS$/\\":
     KEY_LIST.append(char)
@@ -51,14 +51,14 @@ def PressKey(hexKeyCode):
     ii_ = Input_I()
     ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008, 0, ctypes.pointer(extra) )
     x = Input( ctypes.c_ulong(1), ii_ )
-    ctypes.windll.user32.SENDINPUT(1, ctypes.pointer(x), ctypes.sizeof(x))
+    ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 def ReleaseKey(hexKeyCode):
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
     ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008 | 0x0002, 0, ctypes.pointer(extra) )
     x = Input( ctypes.c_ulong(1), ii_ )
-    ctypes.windll.user32.SENDINPUT(1, ctypes.pointer(x), ctypes.sizeof(x))
+    ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 # directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
 
@@ -198,12 +198,12 @@ def countdown(seconds):
         time.sleep(1)
 
 
-def prompt_quit():
-    prompt = input("Would you like to cointue training or exit? \nType (quit) to exit.\n")
+def prompt_quit(keys):
+    prompt = input("Would you like to continue collecting training data or exit? \nType (quit) to exit or press (C) to continue.\n")
     if prompt == 'quit':
-        sys.exit()
-    else:
-        return
+        return True
+    elif 'C' in keys:
+        return False
 
 
 

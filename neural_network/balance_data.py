@@ -1,14 +1,12 @@
-import sys
-sys.path.append('../dependencies')
 import numpy as np 
 import pandas as pd 
-import constants as const
-
 import cv2
+
+from settings import FILE_NAME, FINAL_FILE_NAME
 from collections import Counter
 from random import shuffle
 
-train_data = np.load(const.FILE_NAME)
+train_data = np.load(FILE_NAME)
 
 df = pd.DataFrame(train_data)
 print(df.head)
@@ -54,5 +52,5 @@ shuffle(final_data)
 print("final data: {}".format(len(final_data)))
 print("train data: {}".format(len(train_data)))
 
-#np.save(const.FINAL_FILE_NAME, final_data)
+np.save(FINAL_FILE_NAME, final_data)
 

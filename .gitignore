@@ -1,3 +1,5 @@
 __pycache__
 *.npy
 old_functions
+checkpoint
+models
