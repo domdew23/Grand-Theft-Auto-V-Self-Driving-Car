@@ -113,8 +113,7 @@ def main():
 				total_length += tmp_length
 				save(total_length, training_data)
 				training_data = []
-			time = time.time()- start_time
-			print("Not Paused Loop took: {}{:.3f}{} seconds || tmp_length: {}".format('{', time, '}', tmp_length))
+			print("Not Paused Loop took: {}{:.3f}{} seconds || tmp_length: {}".format('{', time.time()- start_time, '}', tmp_length))
 		
 		keys = key_check()
 
