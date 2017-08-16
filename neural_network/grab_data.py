@@ -2,7 +2,7 @@ import sys, os, time, cv2
 sys.path.append('..\dependencies')
 import numpy as np
 
-from settings import FILE_NAME, WIDTH, HEIGHT
+from settings import WIDTH, HEIGHT, TYPE, NAME
 from functions import key_check, grab_screen, countdown, prompt_quit
 
 # neural network:
@@ -20,6 +20,18 @@ sa = [0,0,0,0,0,0,1,0,0]
 sd = [0,0,0,0,0,0,0,1,0]
 nk = [0,0,0,0,0,0,0,0,1]
 
+def start():
+	starting_value = 1
+	while True:
+		FILE_NAME = '../data/{}/{}_training_data_{}.npy'.format(TYPE, NAME, starting_value)
+		if os.path.isfile(FILE_NAME):
+			print("File exists...Moving to next file...", starting_value)
+			starting_value += 1
+		else:
+			print("File does not exist, you may now begin collectin data",starting_value)
+			break
+	return starting_value, FILE_NAME
+
 
 def keys_to_output(keys):
     # Convert keys to array
@@ -27,53 +39,34 @@ def keys_to_output(keys):
     #[W,S,A,D,WA,WD,SA,SD,NOKEY]
 
     output = [0,0,0,0,0,0,0,0,0]
+
     if 'W' in keys and 'A' in keys:
         output = wa
     elif 'W' in keys and 'D' in keys:
         output = wd
     elif 'S' in keys and 'A' in keys:
-    	output = sa
+        output = sa
     elif 'S' in keys and 'D' in keys:
-    	output = sd
-    elif 'W' in  keys:
-    	output = w
+        output = sd
+    elif 'W' in keys:
+        output = w
     elif 'S' in keys:
-    	output = s
+        output = s
     elif 'A' in keys:
-    	output = a
+        output = a
     elif 'D' in keys:
-    	output = d
+        output = d
     else:
-    	output = nk
+        output = nk
     return output
 
-
-def get_length():
-	if os.path.isfile(FILE_NAME):
-		with open(FILE_NAME, 'r') as file:
-			print("File exists, loading previous data...")
-			total_length = len(np.load(FILE_NAME))
-	else:
-		total_length = 0
-	return total_length
-
-
-def save(length, training_data):
+def save(FILE_NAME, training_data):
 	save_time = time.time()
-	print("Saving... || training_data length: {}".format(length))
-	if not os.path.isfile(FILE_NAME):
-		print("File does not exist, creating file...")
-		with open(FILE_NAME, 'wb') as file:
-			np.save(file, training_data)
-	else:
-		print("File exists, appending data...")
-		with open(FILE_NAME, 'ab') as file:
-			np.save(file, training_data)
-
+	print("Saving... || training_data length: {}".format(len(training_data)))
+	np.save(FILE_NAME, training_data)
 	print("Took || {}{:.2f}{} seconds to save".format('{', time.time()- save_time, '}'))
 	print("Saved")
 	time.sleep(2)
-
 
 
 def get_screen():
@@ -89,11 +82,8 @@ def show_screen(screen):
 		cv2.destroyAllWindows()
 
 
-def main():
-	start_time = time.time() 
-	total_length = get_length()
+def main(starting_value, FILE_NAME):
 	training_data = []
-	print("Took || {}{}{} seconds to load data".format('{', time.time()- start_time, '}'))
 	countdown(4)
 	PAUSED = False
 
@@ -107,13 +97,14 @@ def main():
 			keys = key_check()
 			output = keys_to_output(keys)
 			training_data.append([screen, output])
-			tmp_length = len(training_data)
+			length = len(training_data)
 
-			if tmp_length % 1000 == 0:
-				total_length += tmp_length
-				save(total_length, training_data)
+			if length == 2500:
+				save(FILE_NAME, training_data)
 				training_data = []
-			print("Not Paused Loop took: {}{:.3f}{} seconds || tmp_length: {}".format('{', time.time()- start_time, '}', tmp_length))
+				starting_value += 1
+				FILE_NAME = '../data/{}/{}_training_data_{}.npy'.format(TYPE, NAME, starting_value)
+			print("Not Paused Loop took: {}{:.3f}{} seconds || tmp_length: {}".format('{', time.time()- start_time, '}', length))
 		
 		keys = key_check()
 
@@ -130,9 +121,10 @@ def main():
 				PAUSED = True
 				time.sleep(1)
 				print('Paused')
-				print("training_data length: {}".format(total_length))
+				print("training_data length: {}".format(length))
 				print('Press (t) to unpause')
 				print('Press (q) at any time to quit')
 
 
-main()
+starting_value, FILE_NAME = start()
+main(starting_value, FILE_NAME)
