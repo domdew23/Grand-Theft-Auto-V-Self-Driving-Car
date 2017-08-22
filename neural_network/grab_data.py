@@ -100,6 +100,7 @@ def main(starting_value, FILE_NAME):
 			length = len(training_data)
 
 			if length == 2500:
+				print("Currently on file number ||",starting_value)
 				save(FILE_NAME, training_data)
 				training_data = []
 				starting_value += 1
