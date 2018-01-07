@@ -70,8 +70,6 @@ def sentnet_color_2d(width, height, frame_count, lr, output=9, model_name = 'sen
     return model
 
 
-
-
 def inception_v3(width, height, frame_count, lr, output=9, model_name = 'sentnet_color.model'):
     network = input_data(shape=[None, width, height,3], name='input')
     conv1_7_7 = conv_2d(network, 64, 7, strides=2, activation='relu', name = 'conv1_7_7_s2')
@@ -329,10 +327,6 @@ def inception_v3_3d(width, height, frame_count, lr, output=9, model_name = 'sent
 
 
     return model
-
-
-
-
 
 
 def sentnet_LSTM_gray(width, height, frame_count, lr, output=9):

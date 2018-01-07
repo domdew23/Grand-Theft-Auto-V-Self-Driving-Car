@@ -86,6 +86,9 @@ def main(starting_value, FILE_NAME):
 	training_data = []
 	countdown(4)
 	PAUSED = False
+	SHOW = False
+	if (sys.argv[1] == '-s'):
+		SHOW = True
 
 	while True:
 		if not PAUSED:
